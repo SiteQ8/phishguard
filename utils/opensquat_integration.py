@@ -38,8 +38,17 @@ class OpenSquatIntegration:
 
     def _find_opensquat(self) -> Optional[str]:
         """Find OpenSquat installation or download if needed"""
+        import os
+        
+        # Check for environment variable first (Docker container)
+        env_path = os.getenv('OPENSQUAT_PATH')
+        if env_path and Path(env_path).exists():
+            logger.info(f"Using OpenSquat from environment: {env_path}")
+            return env_path
+        
         # Check if opensquat.py exists in current directory or PATH
         possible_paths = [
+            Path('/opt/opensquat/opensquat.py'),  # Docker container location
             Path('./opensquat/opensquat.py'),
             Path('./opensquat.py'),
             Path('/usr/local/bin/opensquat.py')
@@ -47,6 +56,7 @@ class OpenSquatIntegration:
 
         for path in possible_paths:
             if path.exists():
+                logger.info(f"Found OpenSquat at: {path}")
                 return str(path)
 
         logger.warning("OpenSquat not found. Please install from: https://github.com/atenreiro/opensquat")

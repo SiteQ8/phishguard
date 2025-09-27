@@ -22,5 +22,8 @@ pytest-flask==1.3.0
 gunicorn==23.0.0
 eventlet==0.33.3
 
-# Note: OpenSquat should be installed separately from:
-# git clone https://github.com/atenreiro/opensquat.git
+# Note: OpenSquat is automatically installed in Docker containers
+# For manual installation: git clone https://github.com/atenreiro/opensquat.git
+
+# Additional dependencies for OpenSquat integration
+Levenshtein==0.21.1

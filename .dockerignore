@@ -1,0 +1,21 @@
+# filename: .dockerignore
+# Keep the build context small and secure
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.log
+.env
+.env.*
+.git
+.gitignore
+.vscode/
+.idea/
+node_modules/
+dist/
+build/
+*.sqlite
+*.db
+

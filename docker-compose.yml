@@ -1,0 +1,31 @@
+# filename: docker-compose.yml
+services:
+  phishguard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: phishguard:latest
+    container_name: phishguard
+    restart: unless-stopped
+    ports:
+      - "8080:5000"
+    env_file:
+      - .env
+    environment:
+      # Allow overriding defaults in the image if .env is absent
+      FLASK_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-env}
+      CERTSTREAM_URL: ${CERTSTREAM_URL:-wss://certstream.calidog.io/}
+      OPENSQUAT_SCAN_INTERVAL: ${OPENSQUAT_SCAN_INTERVAL:-1800}
+      OPENSQUAT_PATH: ${OPENSQUAT_PATH:-/opt/opensquat/opensquat.py}
+      CRITICAL_RISK_THRESHOLD: ${CRITICAL_RISK_THRESHOLD:-90}
+      HIGH_RISK_THRESHOLD: ${HIGH_RISK_THRESHOLD:-70}
+      MEDIUM_RISK_THRESHOLD: ${MEDIUM_RISK_THRESHOLD:-50}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+

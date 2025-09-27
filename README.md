@@ -55,13 +55,14 @@ A comprehensive real-time phishing detection system that integrates **CertStream
    pip install -r requirements.txt
    ```
 
-3. **Install OpenSquat (optional but recommended):**
+3. **Install OpenSquat (optional for manual installation):**
    ```bash
    git clone https://github.com/atenreiro/opensquat.git
    cd opensquat
    pip install -r requirements.txt
    cd ..
    ```
+   **Note:** OpenSquat is automatically included in Docker deployments.
 
 4. **Run the application:**
    ```bash
@@ -185,15 +186,69 @@ python app.py
 gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 app:app
 ```
 
-### Docker (Optional)
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 5000
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "--bind", "0.0.0.0:5000", "app:app"]
+### Docker Deployment
+
+PhishGuard includes full Docker support for easy deployment and containerization.
+
+#### Quick Start with Docker Compose
+```bash
+# Build and run with docker-compose
+make run
+# or manually:
+docker-compose up -d --build
+
+# View logs
+make logs
+# or manually:
+docker-compose logs -f
+
+# Stop the application
+make stop
+# or manually:
+docker-compose down
+```
+
+#### Manual Docker Build
+```bash
+# Build the Docker image
+make build
+# or manually:
+docker build -t phishguard:latest .
+
+# Run the container
+docker run -d -p 8080:5000 --name phishguard phishguard:latest
+```
+
+#### Environment Configuration
+Create a `.env` file (copy from `.env.example`) to configure:
+- `LOG_LEVEL`: Logging level (INFO, DEBUG, WARNING)
+- `SECRET_KEY`: Flask secret key for sessions
+- `CERTSTREAM_URL`: CertStream WebSocket URL
+- `OPENSQUAT_PATH`: Path to OpenSquat executable (auto-configured in Docker)
+- Risk thresholds and other settings
+
+#### Integrated Components
+The Docker deployment includes:
+- **OpenSquat**: Automatically installed and configured at `/opt/opensquat/opensquat.py`
+- **All Dependencies**: No manual dependency management required
+- **Optimized Configuration**: Pre-configured for best performance
+
+#### Access the Application
+After starting with Docker, access the dashboard at: http://localhost:8080
+
+**Note**: The default port mapping is 8080:5000 to avoid conflicts with other services.
+
+#### Verify OpenSquat Integration
+To verify that OpenSquat is properly integrated in the Docker container:
+```bash
+# Check container logs for OpenSquat detection
+docker logs phishguard | grep opensquat_integration
+
+# Test OpenSquat directly in the container
+docker exec phishguard python3 /opt/opensquat/opensquat.py --help
+
+# Verify the integration path
+docker exec phishguard ls -la /opt/opensquat/opensquat.py
 ```
 
 ## 🔒 Security Considerations

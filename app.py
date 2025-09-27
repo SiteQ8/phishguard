@@ -361,6 +361,10 @@ class PhishDetector:
         logger.info(f"Starting PhishGuard Dashboard on {host}:{port}")
         self.socketio.run(self.app, host=host, port=port, debug=debug)
 
+# Create a global app instance for Gunicorn
+detector = PhishDetector()
+app = detector.app
+socketio = detector.socketio
+
 if __name__ == '__main__':
-    detector = PhishDetector()
     detector.run(debug=True)
